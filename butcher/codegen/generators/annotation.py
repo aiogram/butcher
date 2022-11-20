@@ -1,9 +1,9 @@
 from butcher.common_types import AnyDict
 
 
-def args_as_str(*args, **kwargs):
+def args_as_str(*args, _trailing_coma: bool = False, **kwargs):
     result = ", ".join([*args, *[f"{k}={v}" for k, v in kwargs.items()]])
-    if result:
+    if _trailing_coma and result:
         result += ","
     return result
 

@@ -136,7 +136,7 @@ async def {name}({method_args},) -> {type_as_str(method['object']['returning']['
 {description}
     """
 
-    call = {pythonize_class_name(method['object']['name'])}({args_as_str(**call_kwargs)})
+    call = {pythonize_class_name(method['object']['name'])}({args_as_str(**call_kwargs, _trailing_coma=True)})
     return await self(call, request_timeout=request_timeout)
         '''
         return parse_statement(statement.strip())
