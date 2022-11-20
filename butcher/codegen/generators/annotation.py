@@ -2,7 +2,10 @@ from butcher.common_types import AnyDict
 
 
 def args_as_str(*args, **kwargs):
-    return ", ".join([*args, *[f"{k}={v}" for k, v in kwargs.items()]])
+    result = ", ".join([*args, *[f"{k}={v}" for k, v in kwargs.items()]])
+    if result:
+        result += ","
+    return result
 
 
 def annotation_as_str(annotation: AnyDict, as_field: bool = False) -> str:

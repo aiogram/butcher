@@ -128,6 +128,7 @@ def command_apply_all(registry: EntitiesRegistry, config: ProjectConfig, diff: b
     _apply(registry=registry, config=config, diff=diff, category="types", names=())
     _apply(registry=registry, config=config, diff=diff, category="methods", names=())
     _apply(registry=registry, config=config, diff=diff, category="enums", names=())
+    _apply_bot(registry=registry, config=config, diff=diff)
 
 
 def _apply(
@@ -180,6 +181,43 @@ def _apply(
             _diff_in_progress(docs_index_path, old_index_docs, new_index_docs, progress)
         else:
             docs_index_path.write_text(new_index_docs)
+        progress()
+
+
+@group_apply.command("bot")
+@click.option(
+    "--diff",
+    is_flag=True,
+    default=False,
+    help="Show diff instead of applying changes",
+)
+@pass_config
+@pass_registry
+def command_apply_bot(registry: EntitiesRegistry, config: ProjectConfig, diff: bool):
+    """
+    Generate Bot class
+    """
+    _apply_bot(registry=registry, config=config, diff=diff)
+
+
+def _apply_bot(registry: EntitiesRegistry, config: ProjectConfig, diff: bool):
+    """
+    Generate Bot class
+    """
+    with alive_bar(
+        title="Rendering bot class",
+        enrich_print=False,
+        title_length=20,
+        monitor=False,
+    ) as progress:
+        code_manager = CodegenManager(config=config, registry=registry)
+        progress()
+        code_path, old_code, new_code = code_manager.process_bot()
+        progress()
+        if diff:
+            _diff_in_progress(code_path, old_code, new_code, progress)
+        else:
+            code_path.write_text(new_code)
         progress()
 
 

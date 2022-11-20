@@ -9,6 +9,7 @@ from libcst.codemod.visitors import AddImportsVisitor
 
 from butcher.codegen.generators.bases import ensure_entity_class
 from butcher.codegen.generators.pythonize import pythonize_class_name, pythonize_name
+from butcher.codegen.transformers.bot import BotTransformer
 from butcher.codegen.transformers.enums import EnumEntityTransformer
 from butcher.codegen.transformers.init import InitTransformer
 from butcher.codegen.transformers.methods import MethodEntityTransformer
@@ -91,3 +92,22 @@ class CodegenManager:
 
         new_code = module.code_for_node(module)
         return self._reformat_code(new_code)
+
+    def apply_bot(self, code: str) -> str:
+        module = parse_module(code)
+
+        context = CodemodContext()
+
+        module = module.visit(
+            BotTransformer(context=context, entities=self.registry.registry["methods"])
+        )
+        module = module.visit(AddImportsVisitor(context=context))
+
+        new_code = module.code_for_node(module)
+        return self._reformat_code(new_code)
+
+    def process_bot(self) -> tuple[Path, str, str]:
+        code_path = self.resolve_package_path("client", "bot.py")
+        code = self.read_code(code_path)
+        new_code = self.apply_bot(code)
+        return code_path, code, new_code
