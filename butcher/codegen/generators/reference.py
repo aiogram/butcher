@@ -1,5 +1,5 @@
+from butcher.codegen.generators.pythonize import pythonize_class_name, pythonize_name
 from butcher.common_types import AnyDict
-from butcher.parsers.pythonize import pythonize_class_name, pythonize_name
 
 
 def render_reference(entity: AnyDict) -> str:
@@ -13,6 +13,7 @@ def render_reference(entity: AnyDict) -> str:
 
 def render_entity_reference(category: str, name: str, label: str | None = None) -> str:
     return _render_reference(
+        "class",
         "aiogram",
         category,
         pythonize_name(name),
@@ -21,8 +22,8 @@ def render_entity_reference(category: str, name: str, label: str | None = None) 
     )
 
 
-def _render_reference(*parts: str, label: str | None = None) -> str:
-    ref = ".".join(parts)
+def _render_reference(ref: str, *parts: str, label: str | None = None) -> str:
+    value = ".".join(parts)
     if label:
-        ref = f"{label} <{ref}>"
-    return f":ref:`{ref}`"
+        value = f"{label} <{value}>"
+    return f":{ref}:`{value}`"
