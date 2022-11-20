@@ -8,6 +8,7 @@ from butcher.parsers.entities.resolvers.aliases import AliasesConfig
 from butcher.parsers.entities.resolvers.annotation_type import AnnotationTypeResolver
 from butcher.parsers.entities.resolvers.base import RejectResolver
 from butcher.parsers.entities.resolvers.base_class import BaseClassResolver
+from butcher.parsers.entities.resolvers.can_be_used_in_webhook import CanBeUsedInWebhookResolver
 from butcher.parsers.entities.resolvers.const import ConstResolver
 from butcher.parsers.entities.resolvers.extend import ExtendResolver
 from butcher.parsers.entities.resolvers.replace import LocalReplacementResolver
@@ -33,6 +34,7 @@ class EntitiesRegistry:
                 annotation_type_resolver,
                 ReturningTypeResolver(),
                 BaseClassResolver("TelegramMethod"),
+                CanBeUsedInWebhookResolver(),
                 local_replacement_resolver,
             ],
             "types": [

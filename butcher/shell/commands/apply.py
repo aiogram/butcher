@@ -7,6 +7,7 @@ from alive_progress import alive_bar
 from click import Context, Parameter, pass_context
 
 from butcher.codegen.manager import CodegenManager
+from butcher.docs.manager import DocsManager
 from butcher.parsers.entities.generator import EntitiesRegistry
 from butcher.shell.config import ProjectConfig, pass_config
 
@@ -138,7 +139,8 @@ def _apply(
 ):
     if not names:
         names = tuple(registry.registry[category].keys())
-    manager = CodegenManager(config=config, registry=registry)
+    code_manager = CodegenManager(config=config, registry=registry)
+    docs_manager = DocsManager(config=config, registry=registry)
     with alive_bar(
         len(names) + 1,
         # dual_line=True,
@@ -148,23 +150,36 @@ def _apply(
     ) as progress:
         for name in names:
             progress.text = f"Rendering {name}"
-            code_path = manager.entity_path(category, name=name)
-            code = manager.read_code(code_path)
-            new_code = manager.apply_entity(category=category, name=name, code=code)
+            code_path, old_code, new_code = code_manager.process_entity(
+                category=category, name=name
+            )
+            docs_path, old_docs, new_docs = docs_manager.process_entity(
+                category=category, name=name
+            )
 
             if diff:
-                _diff_in_progress(code_path, code, new_code, progress)
+                _diff_in_progress(code_path, old_code, new_code, progress)
+                _diff_in_progress(docs_path, old_docs, new_docs, progress)
             else:
                 code_path.write_text(new_code)
+                docs_path.write_text(new_docs)
             progress()
 
-        init_path = manager.resolve_package_path(category, "__init__.py")
-        init = manager.read_code(init_path)
-        new_init = manager.apply_init(init, names=names)
+        init_path = code_manager.resolve_package_path(category, "__init__.py")
+        init = code_manager.read_code(init_path)
+        new_init = code_manager.apply_init(init, names=names)
         if diff:
             _diff_in_progress(code_path, init, new_init, progress)
         else:
             init_path.write_text(new_init)
+
+        docs_index_path, old_index_docs, new_index_docs = docs_manager.process_index(
+            category=category
+        )
+        if diff:
+            _diff_in_progress(docs_index_path, old_index_docs, new_index_docs, progress)
+        else:
+            docs_index_path.write_text(new_index_docs)
         progress()
 
 

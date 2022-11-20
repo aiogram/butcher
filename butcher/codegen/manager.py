@@ -76,6 +76,12 @@ class CodegenManager:
         new_code = module.code_for_node(module)
         return self._reformat_code(new_code)
 
+    def process_entity(self, category: str, name: str) -> tuple[Path, str, str]:
+        code_path = self.entity_path(category, name=name)
+        code = self.read_code(code_path)
+        new_code = self.apply_entity(category=category, name=name, code=code)
+        return code_path, code, new_code
+
     def apply_init(self, code: str, names: Sequence[str]) -> str:
         module = parse_module(code)
         context = CodemodContext()

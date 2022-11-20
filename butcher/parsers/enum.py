@@ -42,6 +42,7 @@ def resolve_enum(registry: RegistryType, enum_config: AnyDict):
             "description": enum_config["description"],
             "html_description": enum_config["description"],
             "rst_description": enum_config["description"].strip(),
+            "docs": enum_config.get("docs"),
             "values": values,
             "category": "enums",
         },
