@@ -140,9 +140,11 @@ def _apply(
         names = tuple(registry.registry[category].keys())
     manager = CodegenManager(config=config, registry=registry)
     with alive_bar(
-        len(names),
-        dual_line=True,
+        len(names) + 1,
+        # dual_line=True,
         title=f"Rendering {category}...",
+        enrich_print=False,
+        title_length=20,
     ) as progress:
         for name in names:
             progress.text = f"Rendering {name}"
@@ -151,21 +153,22 @@ def _apply(
             new_code = manager.apply_entity(category=category, name=name, code=code)
 
             if diff:
-                _show_diff(code_path, code, new_code)
+                _diff_in_progress(code_path, code, new_code, progress)
             else:
                 code_path.write_text(new_code)
             progress()
 
-    init_path = manager.resolve_package_path(category, "__init__.py")
-    init = manager.read_code(init_path)
-    new_init = manager.apply_init(init, names=names)
-    if diff:
-        _show_diff(init_path, init, new_init)
-    else:
-        init_path.write_text(new_init)
+        init_path = manager.resolve_package_path(category, "__init__.py")
+        init = manager.read_code(init_path)
+        new_init = manager.apply_init(init, names=names)
+        if diff:
+            _diff_in_progress(code_path, init, new_init, progress)
+        else:
+            init_path.write_text(new_init)
+        progress()
 
 
-def _show_diff(path: Path, a: str, b: str):
+def _render_diff(path: Path, a: str, b: str):
     diff_lines = difflib.unified_diff(
         a=a.splitlines(keepends=True),
         b=b.splitlines(keepends=True),
@@ -173,4 +176,12 @@ def _show_diff(path: Path, a: str, b: str):
         tofile=str(path),
     )
     diff = "".join(diff_lines)
-    click.echo_via_pager(diff)
+    return diff
+
+
+def _diff_in_progress(path: Path, a: str, b: str, bar):
+    diff = _render_diff(path, a, b)
+    if not diff:
+        return
+    with bar.pause():
+        click.echo_via_pager(diff)
