@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "butcher"
-version = "0.1.2"
+version = "0.1.3"
 description = "Code-generation utility for aiogram v3 core developers"
 authors = ["Alex Root Junior <jroot.junior@gmail.com>"]
 readme = "README.md"
