@@ -11,7 +11,7 @@ from butcher.shell.config import ProjectConfig, pass_config
 logger = logging.getLogger(__name__)
 
 
-@click.command("refresh")
+@click.command("refresh", help="Update entities from docs")
 @pass_config
 def command_refresh(config: ProjectConfig):
     click.echo("Refreshing entities tree...")

@@ -14,9 +14,27 @@ logger = logging.getLogger(__name__)
 
 
 @click.group()
-@click.option("--project-dir", type=click.Path(path_type=Path), default=".project")
-@click.option("--package-dir", type=click.Path(path_type=Path), default="aiogram")
-@click.option("--docs-dir", type=click.Path(path_type=Path), default="docs")
+@click.option(
+    "--project-dir",
+    type=click.Path(path_type=Path),
+    default=".butcher",
+    show_default=True,
+    help="Path to all codegen configs",
+)
+@click.option(
+    "--package-dir",
+    type=click.Path(path_type=Path),
+    default="aiogram",
+    show_default=True,
+    help="Path to `aiogram` package dir",
+)
+@click.option(
+    "--docs-dir",
+    type=click.Path(path_type=Path),
+    default="docs",
+    show_default=True,
+    help="Path to docs dir",
+)
 @click.pass_context
 def cli(ctx: Context, project_dir: Path, package_dir: Path, docs_dir: Path):
     logging.basicConfig(

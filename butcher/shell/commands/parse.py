@@ -6,7 +6,7 @@ from butcher.parsers.consts import DOCS_URL
 from butcher.shell.config import ProjectConfig, pass_config
 
 
-@click.command("parse")
+@click.command("parse", help="Parse API docs to cache")
 @pass_config
 def command_parse(config: ProjectConfig):
     docs = parse_docs(DOCS_URL)
