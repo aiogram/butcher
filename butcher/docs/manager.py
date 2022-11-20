@@ -68,6 +68,8 @@ class DocsManager:
         for name, entity in self.registry.registry[category].items():
             title = entity.get("group", {}).get("title", None)
             index[title].append(name)
+        for group in index.values():
+            group.sort()
         return index
 
     def apply_index(self, category: str, index: str) -> str:
