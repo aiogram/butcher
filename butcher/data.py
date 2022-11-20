@@ -21,7 +21,7 @@ def dump_json(value: Any, path: Path, force: bool = False) -> bool:
     else:
         current_content = b""
 
-    content = orjson.dumps(value, option=orjson.OPT_INDENT_2, default=_default)
+    content = orjson.dumps(value, option=orjson.OPT_INDENT_2, default=_default) + b"\n"
     if content != current_content or force:
         with path.open("wb") as f:
             f.write(content)
