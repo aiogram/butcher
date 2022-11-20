@@ -9,7 +9,6 @@ from libcst import (
     parse_statement,
 )
 from libcst.codemod import CodemodContext, ContextAwareTransformer
-from libcst.codemod.visitors import AddImportsVisitor
 
 from butcher.codegen.generators.annotation import annotation_as_str, args_as_str, type_as_str
 from butcher.codegen.generators.pythonize import pythonize_class_name, pythonize_name
@@ -73,19 +72,20 @@ class BotTransformer(ContextAwareTransformer):
         return self._render_method(name, method)
 
     def _ensure_import(self, item: AnyDict):
-        if item["type"] == "entity":
-            references = item["references"]
-            AddImportsVisitor.add_needed_import(
-                self.context,
-                f"{references['category']}",
-                pythonize_class_name(references["name"]),
-                relative=2,
-            )
-        elif item["type"] == "union":
-            for variant in item["items"]:
-                self._ensure_import(variant)
-        elif item["type"] == "array":
-            self._ensure_import(item["items"])
+        # if item["type"] == "entity":
+        #     references = item["references"]
+        #     AddImportsVisitor.add_needed_import(
+        #         self.context,
+        #         f"{references['category']}",
+        #         pythonize_class_name(references["name"]),
+        #         relative=2,
+        #     )
+        # elif item["type"] == "union":
+        #     for variant in item["items"]:
+        #         self._ensure_import(variant)
+        # elif item["type"] == "array":
+        #     self._ensure_import(item["items"])
+        return
 
     def _render_method(self, name, method: AnyDict):
         args = []
