@@ -18,6 +18,8 @@ def ensure_entity_class(module: Module, name: str) -> Module:
         return module
 
     class_template = parse_template_module(BASE_ENTITY_TEMPLATE, class_name=Name(name))
+    if not module.body:
+        return class_template
     module = module.with_changes(
         body=[
             *module.body,
