@@ -62,17 +62,19 @@ class CodegenManager:
         module = ensure_entity_class(
             module=module, name=pythonize_class_name(entity["object"]["name"])
         )
+        context = CodemodContext()
 
         if entity["object"]["category"] == "types":
             transformer = TypeEntityTransformer(entity=entity)
         elif entity["object"]["category"] == "methods":
             transformer = MethodEntityTransformer(entity=entity)
         elif entity["object"]["category"] == "enums":
-            transformer = EnumEntityTransformer(entity=entity)
+            transformer = EnumEntityTransformer(context=context, entity=entity)
         else:
             raise NotImplementedError()
 
         module = module.visit(transformer)
+        module = module.visit(AddImportsVisitor(context=context))
 
         new_code = module.code_for_node(module)
         return self._reformat_code(new_code)

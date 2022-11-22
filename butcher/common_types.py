@@ -1,5 +1,5 @@
-from typing import Any, Literal, TypeAlias
+from typing import Any, TypeAlias
 
 AnyDict: TypeAlias = dict[str, Any]
-CategoryType: TypeAlias = Literal["types", "methods", "enums"]
+CategoryType: TypeAlias = str
 RegistryType: TypeAlias = dict[CategoryType, dict[str, AnyDict]]

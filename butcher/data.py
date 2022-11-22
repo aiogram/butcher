@@ -36,4 +36,5 @@ def load_json(path: Path) -> Any:
 
 def load_yaml(path: Path) -> Any:
     with path.open("r") as f:
+
         return yaml.safe_load(f)

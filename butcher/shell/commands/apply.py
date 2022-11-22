@@ -93,7 +93,7 @@ def command_apply_method(
 @click.argument(
     "names",
     nargs=-1,
-    type=EntityNameType("types"),
+    type=EntityNameType("enums"),
 )
 @click.option(
     "--diff",

@@ -1,5 +1,4 @@
 import logging
-from collections import defaultdict
 from pathlib import Path
 
 from butcher.common_types import RegistryType
@@ -25,7 +24,11 @@ class EntitiesRegistry:
         project_dir: Path,
     ) -> None:
         self.project_dir = project_dir
-        self.registry: RegistryType = defaultdict(dict)
+        self.registry: RegistryType = {
+            "methods": {},
+            "types": {},
+            "enums": {},
+        }
 
         annotation_type_resolver = AnnotationTypeResolver()
         local_replacement_resolver = LocalReplacementResolver()
@@ -73,7 +76,9 @@ class EntitiesRegistry:
 
     def resolve(self):
         for category, entities in self.registry.items():
+            logger.debug("Resolve category %s", category)
             for entity in entities.values():
+                logger.debug("Resolve entity %s.%s", category, entity["object"]["name"])
                 resolvers = self.resolvers.get(category)
                 if not resolvers:
                     continue

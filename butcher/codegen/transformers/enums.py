@@ -8,7 +8,6 @@ from libcst import (
     BaseSmallStatement,
     BaseStatement,
     ClassDef,
-    CSTTransformer,
     FlattenSentinel,
     FunctionDef,
     Name,
@@ -17,14 +16,16 @@ from libcst import (
     SimpleStatementLine,
     parse_statement,
 )
+from libcst.codemod import CodemodContext, ContextAwareTransformer
+from libcst.codemod.visitors import AddImportsVisitor
 
 from butcher.codegen.generators.pythonize import pythonize_class_name
 from butcher.common_types import AnyDict
 
 
-class EnumEntityTransformer(CSTTransformer):
-    def __init__(self, entity: AnyDict) -> None:
-        super().__init__()
+class EnumEntityTransformer(ContextAwareTransformer):
+    def __init__(self, context: CodemodContext, entity: AnyDict) -> None:
+        super().__init__(context=context)
 
         self.entity = entity
         self.inside_class = False
@@ -94,6 +95,7 @@ class EnumEntityTransformer(CSTTransformer):
 
         bases = [Arg(value=Name(value=base)) for base in self.entity["object"]["bases"]]
 
+        AddImportsVisitor.add_needed_import(self.context, "enum", "Enum")
         return updated_node.with_changes(bases=bases).with_deep_changes(
             updated_node.body,
             body=[
