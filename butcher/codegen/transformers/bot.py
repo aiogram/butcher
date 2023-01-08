@@ -126,6 +126,8 @@ class BotTransformer(ContextAwareTransformer):
             [
                 method["object"]["rst_description"].strip(),
                 "",
+                f"Source: https://core.telegram.org/bots/api#{method['object']}",
+                "",
                 *annotations,
             ]
         )
